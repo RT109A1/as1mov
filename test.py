@@ -112,6 +112,7 @@ def sendRequest(text, model_a, userlist, id):
   a41 = a3['native_tokens_completion']
   tokens_used = a4 + a41
   credits_used = tokens_used * model_price
+  print(credits_used)
   rp1 = resp_dict["choices"]
   rp2 = rp1[0]
   rp3 = rp2["message"]
@@ -218,7 +219,7 @@ async def mainFunction(message: Message):
             if usercontext is False:
               ans, all_user_list, tkns = sendRequestNoContext(message.text, usermodel, all_user_list, userid)
               await message.answer(ans)
-              sp = 'Токенов всего: ' + str(tkns)
+              sp = 'Токенов всего: ' + str(tkns) + '. Стоимость: ' + str(usermodel[1]*tkns) + ' кредитов.'
               await message.answer(sp)
               print(str(userid) + ':')
               print(message.text)
@@ -227,7 +228,7 @@ async def mainFunction(message: Message):
             else:
               ans, all_user_list, tkns = sendRequest(message.text, usermodel, all_user_list, userid)
               await message.answer(ans)
-              sp = 'Токенов всего: ' + str(tkns)
+              sp = 'Токенов всего: ' + str(tkns) + '. Стоимость: ' + str(usermodel[1]*tkns) + ' кредитов.'
               await message.answer(sp)
               print(str(userid) + ':')
               print(message.text)
@@ -240,11 +241,16 @@ async def mainFunction(message: Message):
          msg += ' кредитов.'
          await message.answer(msg)
     else:
-       await message.answer("Ошибка. Подождите, пока происходит ваша регистрация...")
-       newuser = [userid, 50000, model_openchat, True, [{"role": "user", "content": "This is a placeholder message. You can ignore it."}]]
+       await message.answer("Подождите, пока происходит ваша регистрация...")
+       newuser = [userid, 50000, model_noromaid, True, [{"role": "user", "content": "This is a placeholder message. You can ignore it."}]]
        all_user_list.append(newuser)
        all_user_list = closeAndOpenUserFile(all_user_list)
-       await message.answer("Готово!")
+       await message.answer(
+               """Привет и добро пожаловать в бота AS1MOV! Полезные команды:
+               /help -- помощь
+               /settings -- настройки
+               /balance -- проверить баланс"""
+                                 )
 
 async def main():
     await dp.start_polling(bot)
